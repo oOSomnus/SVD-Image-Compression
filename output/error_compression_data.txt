@@ -1,6 +1,6 @@
-Percentage: 5%, Error: 10772.80, Compression Ratio: 0.0666
-Percentage: 10%, Error: 7020.85, Compression Ratio: 0.1333
-Percentage: 30%, Error: 2428.89, Compression Ratio: 0.3998
-Percentage: 60%, Error: 430.71, Compression Ratio: 0.7996
-Percentage: 80%, Error: 53.94, Compression Ratio: 1.0661
-Percentage: 100%, Error: 0.00, Compression Ratio: 1.3368
+Percentage: 5%, Error: 10772.80, Compression Ratio: 6.66%
+Percentage: 10%, Error: 7020.85, Compression Ratio: 13.33%
+Percentage: 30%, Error: 2428.89, Compression Ratio: 39.98%
+Percentage: 60%, Error: 430.71, Compression Ratio: 79.96%
+Percentage: 80%, Error: 53.94, Compression Ratio: 106.61%
+Percentage: 100%, Error: 0.00, Compression Ratio: 133.68%

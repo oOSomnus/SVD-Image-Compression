@@ -78,7 +78,8 @@ def svd_image_compression(input_image_path, output_dir):
     error_compression_output_path = os.path.join(output_dir, 'error_compression_data.txt')
     with open(error_compression_output_path, 'w') as f:
         for percentage, error, ratio in zip(percentages, errors, compression_ratios):
-            f.write('Percentage: {:.0f}%, Error: {:.2f}, Compression Ratio: {:.4f}\n'.format(percentage * 100, error, ratio))
+            ratio_percentage = ratio * 100  # Convert ratio to percentage
+            f.write('Percentage: {:.0f}%, Error: {:.2f}, Compression Ratio: {:.2f}%\n'.format(percentage * 100, error, ratio_percentage))
 
 
 def open_file_dialog():
