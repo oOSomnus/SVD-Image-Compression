@@ -4,9 +4,11 @@ from matplotlib import pyplot as plt
 from PIL import Image
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from svd_class import svd_2
 
 
-def svd_image_compression(input_image_path, output_dir):
+
+def svd_image_compression(input_image_path, output_dir, custom_svd=True):
     original_image = Image.open(input_image_path)
     image_array = np.array(original_image)
 
@@ -33,9 +35,14 @@ def svd_image_compression(input_image_path, output_dir):
         }
 
         # Apply SVD for each channel
-        U_R, s_R, VT_R = np.linalg.svd(R, full_matrices=False)
-        U_G, s_G, VT_G = np.linalg.svd(G, full_matrices=False)
-        U_B, s_B, VT_B = np.linalg.svd(B, full_matrices=False)
+        if custom_svd:
+            U_R, s_R, VT_R = svd_2(R, 10000000, 1e-12)()
+            U_G, s_G, VT_G = svd_2(G, 10000000, 1e-12)()
+            U_B, s_B, VT_B = svd_2(B, 10000000, 1e-12)()
+        else:
+            U_R, s_R, VT_R = np.linalg.svd(R, full_matrices=False)
+            U_G, s_G, VT_G = np.linalg.svd(G, full_matrices=False)
+            U_B, s_B, VT_B = np.linalg.svd(B, full_matrices=False)
 
         # Reconstruct the image channels at the given rank
         R_compressed = (U_R[:, :rank['R']] * s_R[:rank['R']]) @ VT_R[:rank['R'], :]
