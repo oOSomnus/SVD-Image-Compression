@@ -41,11 +41,11 @@ def svd_image_compression(input_image_path, output_dir):
         R_compressed = (U_R[:, :rank['R']] * s_R[:rank['R']]) @ VT_R[:rank['R'], :]
         G_compressed = (U_G[:, :rank['G']] * s_G[:rank['G']]) @ VT_G[:rank['G'], :]
         B_compressed = (U_B[:, :rank['B']] * s_B[:rank['B']]) @ VT_B[:rank['B'], :]
-        
+
         # Stack the channels back together
         compressed_image = np.stack((R_compressed, G_compressed, B_compressed), axis=-1)
         compressed_image = np.clip(compressed_image, 0, 255)  # Clipping to valid range
-        
+
         # Calculate the compression ratio
         image_size = np.prod(image_array.shape)
         compressed_size = (rank['R'] * (U_R.shape[1] + VT_R.shape[0] + 1) +
@@ -53,7 +53,7 @@ def svd_image_compression(input_image_path, output_dir):
                            rank['B'] * (U_B.shape[1] + VT_B.shape[0] + 1))
         compression_ratio = compressed_size / image_size
         compression_ratios.append(compression_ratio)
-        
+
         # Calculate the error
         error = np.linalg.norm(image_array - compressed_image)
         errors.append(error)
@@ -79,7 +79,8 @@ def svd_image_compression(input_image_path, output_dir):
     with open(error_compression_output_path, 'w') as f:
         for percentage, error, ratio in zip(percentages, errors, compression_ratios):
             ratio_percentage = ratio * 100  # Convert ratio to percentage
-            f.write('Percentage: {:.0f}%, Error: {:.2f}, Compression Ratio: {:.2f}%\n'.format(percentage * 100, error, ratio_percentage))
+            f.write('Percentage: {:.0f}%, Error: {:.2f}, Compression Ratio: {:.2f}%\n'.format(percentage * 100, error,
+                                                                                              ratio_percentage))
 
 
 def open_file_dialog():
@@ -88,12 +89,14 @@ def open_file_dialog():
     )
     if file_path:
         image_path.set(file_path)
+        tickle_image_label.config(text='✔️ Image Selected', fg='green')
 
 
 def open_output_directory_dialog():
     directory_path = filedialog.askdirectory()
     if directory_path:
         output_path.set(directory_path)
+        tickle_output_label.config(text='✔️ Output Folder Selected', fg='green')
 
 
 def run_process():
@@ -108,8 +111,9 @@ def run_process():
         return
 
     try:
-        output_directory = svd_image_compression(input_image_path, selected_output_dir)
-        messagebox.showinfo("Success", f"SVD image compression complete. Compressed images and error vs compression ratio are saved in: {output_directory}")
+        svd_image_compression(input_image_path, selected_output_dir)
+        messagebox.showinfo("Success",
+                            f"SVD image compression complete. Compressed images and error vs compression ratio are saved in: {selected_output_dir}")
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred: {e}")
 
@@ -124,8 +128,13 @@ output_path = tk.StringVar()
 
 tk.Label(root, text='Select an image to compress:', font=my_font).pack(padx=10, pady=5)
 tk.Button(root, text="Browse Image", command=open_file_dialog, font=my_font).pack(padx=10, pady=5)
+tickle_image_label = tk.Label(root, text='', font=my_font)
+tickle_image_label.pack()
+
 tk.Label(root, text='Select output folder:', font=my_font).pack(padx=10, pady=5)
 tk.Button(root, text="Browse Output Folder", command=open_output_directory_dialog, font=my_font).pack(padx=10, pady=5)
+tickle_output_label = tk.Label(root, text='', font=my_font)
+tickle_output_label.pack()
 tk.Button(root, text="Compress Image", command=run_process, font=my_font).pack(padx=10, pady=20)
 
 root.mainloop()
