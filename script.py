@@ -116,13 +116,15 @@ def run_process():
 root = tk.Tk()
 root.title('SVD Image Compression GUI')
 
+my_font = ('Helvetica', 20)
+
 image_path = tk.StringVar()
 output_path = tk.StringVar()
 
-tk.Label(root, text='Select an image to compress:').pack(padx=10, pady=5)
-tk.Button(root, text="Browse Image", command=open_file_dialog).pack(padx=10, pady=5)
-tk.Label(root, text='Select output folder:').pack(padx=10, pady=5)
-tk.Button(root, text="Browse Output Folder", command=open_output_directory_dialog).pack(padx=10, pady=5)
-tk.Button(root, text="Compress Image", command=run_process).pack(padx=10, pady=20)
+tk.Label(root, text='Select an image to compress:', font=my_font).pack(padx=10, pady=5)
+tk.Button(root, text="Browse Image", command=open_file_dialog, font=my_font).pack(padx=10, pady=5)
+tk.Label(root, text='Select output folder:', font=my_font).pack(padx=10, pady=5)
+tk.Button(root, text="Browse Output Folder", command=open_output_directory_dialog, font=my_font).pack(padx=10, pady=5)
+tk.Button(root, text="Compress Image", command=run_process, font=my_font).pack(padx=10, pady=20)
 
 root.mainloop()
