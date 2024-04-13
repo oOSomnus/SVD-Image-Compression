@@ -48,7 +48,7 @@ def svd_2(A, u, v, s, n_dim, n_iter, atol):
 if __name__ == "__main__":
 
     # example
-    A = np.array([[3, 2, 2], [5, 3, -2], [2, -2, 3]])
+    A = np.array([[3, 2, 2], [5, 3, -2]]).T
     n_dim = min(A.shape)
     N, P = A.shape
 
@@ -89,3 +89,24 @@ if __name__ == "__main__":
     assert np.allclose(v, VT, atol=tol)
     """
     assert np.allclose(np.dot(np.dot(u, s_matrix), v), A, atol=tol)
+
+    for i in range(0,10):
+        for j in range(0,10):
+            A = np.random.rand(i, j)
+            n_dim = min(A.shape)
+            N, P = A.shape
+
+            u = np.random.normal(size=(N * N)).reshape(N, N)
+            v = np.random.normal(size=(P * P)).reshape(P, P)
+
+            s = np.zeros(n_dim)
+
+
+
+            u, s, v = svd_2(A, u, v, s, n_dim, 1000000, 1e-12)
+            matrix_s=np.zeros(A.shape)
+            for k in range(len(s)):
+                matrix_s[k][k]=s[k]
+            assert np.allclose(np.dot(np.dot(u, matrix_s), v), A, atol=1e-12)
+            print(f"Test {i}x{j} passed.")
+    print("All tests passed.")
