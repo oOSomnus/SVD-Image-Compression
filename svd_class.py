@@ -1,14 +1,36 @@
 import numpy as np
-
+import pickle as pkl
+import os
 class svd_2():
-    def __init__(self, A, n_iter, atol):
+    def __init__(self, A, n_iter, atol,demo=False, name=""):
         self.A = A
-        self.u = np.random.normal(size=(A.shape[0] * A.shape[0])).reshape(A.shape[0], A.shape[0])
-        self.v = np.random.normal(size=(A.shape[1] * A.shape[1])).reshape(A.shape[1], A.shape[1])
-        self.s = np.zeros(min(A.shape))
+        if not demo:
+            self.u = np.random.normal(size=(A.shape[0] * A.shape[0])).reshape(A.shape[0], A.shape[0])
+            self.v = np.random.normal(size=(A.shape[1] * A.shape[1])).reshape(A.shape[1], A.shape[1])
+            self.s = np.zeros(min(A.shape))
+        else:
+            if os.path.exists(f"./cache/{name}_u.pkl") and os.path.exists(f"./cache/{name}_v.pkl") and os.path.exists(f"./cache/{name}_s.pkl"):
+                with open(f"./cache/{name}_u.pkl","rb") as f:
+                    self.u = pkl.load(f)
+                with open(f"./cache/{name}_v.pkl","rb") as f:
+                    self.v = pkl.load(f)
+                with open(f"./cache/{name}_s.pkl","rb") as f:
+                    self.s = pkl.load(f)
+
+                if self.u.shape[0]!=A.shape[0] or self.v.shape[0]!=A.shape[1]:
+                    self.u = np.random.normal(size=(A.shape[0] * A.shape[0])).reshape(A.shape[0], A.shape[0])
+                    self.v = np.random.normal(size=(A.shape[1] * A.shape[1])).reshape(A.shape[1], A.shape[1])
+                    self.s = np.zeros(min(A.shape))
+            else:
+                self.u = np.random.normal(size=(A.shape[0] * A.shape[0])).reshape(A.shape[0], A.shape[0])
+                self.v = np.random.normal(size=(A.shape[1] * A.shape[1])).reshape(A.shape[1], A.shape[1])
+                self.s = np.zeros(min(A.shape))
+
         self.n_dim = min(A.shape)
         self.n_iter = n_iter
         self.atol = atol
+        self.demo = demo
+        self.name = name
 
     def __call__(self, *args, **kwargs):
         X_res = self.A.copy()
@@ -48,6 +70,15 @@ class svd_2():
 
         if warn:
             print("The algorithm has not converged, but the maximum number of iterations is reached.")
+
+        if not os.path.exists("./cache"):
+            os.mkdir("./cache")
+        with open(f"./cache/{self.name}_u.pkl","wb") as f:
+            pkl.dump(self.u,f)
+        with open(f"./cache/{self.name}_v.pkl","wb") as f:
+            pkl.dump(self.v,f)
+        with open(f"./cache/{self.name}_s.pkl","wb") as f:
+            pkl.dump(self.s,f)
 
         return self.u, self.s, self.v.T
 
@@ -111,4 +142,5 @@ if __name__ == "__main__":
                 matrix_s[k][k]=s[k]
             assert np.allclose(np.dot(np.dot(u, matrix_s), v), A, atol=1e-12)
             print(f"Test {i}x{j} passed.")
+
     print("All tests passed.")

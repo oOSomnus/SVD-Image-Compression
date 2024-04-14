@@ -7,7 +7,6 @@ from tkinter import filedialog, messagebox
 from svd_class import svd_2
 
 
-
 def svd_image_compression(input_image_path, output_dir, custom_svd=True):
     original_image = Image.open(input_image_path)
     image_array = np.array(original_image)
@@ -36,9 +35,9 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
 
         # Apply SVD for each channel
         if custom_svd:
-            U_R, s_R, VT_R = svd_2(R, 10000000, 1e-12)()
-            U_G, s_G, VT_G = svd_2(G, 10000000, 1e-12)()
-            U_B, s_B, VT_B = svd_2(B, 10000000, 1e-12)()
+            U_R, s_R, VT_R = svd_2(R, 1000000, 1, True, "R")()
+            U_G, s_G, VT_G = svd_2(G, 1000000, 1, True, "G")()
+            U_B, s_B, VT_B = svd_2(B, 1000000, 1, True, "B")()
         else:
             U_R, s_R, VT_R = np.linalg.svd(R, full_matrices=False)
             U_G, s_G, VT_G = np.linalg.svd(G, full_matrices=False)
