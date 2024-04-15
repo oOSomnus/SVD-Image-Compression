@@ -43,8 +43,6 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
             'G': int(G_rank * percentage),
             'B': int(B_rank * percentage)
         }
-
-
         # Reconstruct the image channels at the given rank
         R_compressed = (U_R[:, :rank['R']] * s_R[:rank['R']]) @ VT_R[:rank['R'], :]
         G_compressed = (U_G[:, :rank['G']] * s_G[:rank['G']]) @ VT_G[:rank['G'], :]
@@ -59,7 +57,7 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
         compressed_size = (rank['R'] * (U_R.shape[1] + VT_R.shape[0] + 1) +
                            rank['G'] * (U_G.shape[1] + VT_G.shape[0] + 1) +
                            rank['B'] * (U_B.shape[1] + VT_B.shape[0] + 1))
-        compressed_size = min(compressed_size, image_size)
+        # compressed_size = min(compressed_size, image_size)
         compression_ratio = compressed_size / image_size
         compression_ratios.append(compression_ratio)
 
@@ -77,6 +75,15 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
     # Plot the error vs compression ratio
     plt.figure(figsize=(10, 6))
     plt.plot(compression_ratios, errors, marker='o')
+    plt.axvline(x=1, color='r', linestyle='--', linewidth=2)
+    for i, percentage in enumerate(percentages):
+        rank = {
+            'R': int(R_rank * percentage),
+            'G': int(G_rank * percentage),
+            'B': int(B_rank * percentage)
+        }
+        avg_rank = int((rank['R'] + rank['G'] + rank['B']) / 3)  # Calculate average rank
+        plt.text(compression_ratios[i], errors[i], f'Rank {avg_rank}', fontsize=8, verticalalignment='bottom')
     plt.title('Error vs Compression Ratio')
     plt.xlabel('Compression Ratio')
     plt.ylabel('Error')
