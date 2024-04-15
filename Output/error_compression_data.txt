@@ -1,6 +1,0 @@
-Percentage: 5%, Error: 33611.05, Compression Ratio: 8.25%
-Percentage: 10%, Error: 26242.43, Compression Ratio: 16.50%
-Percentage: 30%, Error: 13365.05, Compression Ratio: 49.78%
-Percentage: 60%, Error: 4315.33, Compression Ratio: 99.85%
-Percentage: 80%, Error: 1384.88, Compression Ratio: 133.14%
-Percentage: 100%, Error: 0.00, Compression Ratio: 166.70%

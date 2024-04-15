@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from svd_class import svd_2
 
+def mse(original, compressed):
+    return np.mean((original - compressed) ** 2)
 
 def svd_image_compression(input_image_path, output_dir, custom_svd=True):
     original_image = Image.open(input_image_path)
@@ -22,9 +24,18 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
     B_rank = np.linalg.matrix_rank(B)
 
     # Percentages for compression
-    percentages = [0.05, 0.1, 0.3, 0.6, 0.8, 1.0]
+    percentages = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6,0.7, 0.8, 0.9]
     compression_ratios = []
     errors = []
+    # Apply SVD for each channel
+    if custom_svd:
+            U_R, s_R, VT_R = svd_2(R, 1000000, 1, True, "R")()
+            U_G, s_G, VT_G = svd_2(G, 1000000, 1, True, "G")()
+            U_B, s_B, VT_B = svd_2(B, 1000000, 1, True, "B")()
+    else:
+            U_R, s_R, VT_R = np.linalg.svd(R, full_matrices=False)
+            U_G, s_G, VT_G = np.linalg.svd(G, full_matrices=False)
+            U_B, s_B, VT_B = np.linalg.svd(B, full_matrices=False)
 
     for percentage in percentages:
         rank = {
@@ -33,15 +44,6 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
             'B': int(B_rank * percentage)
         }
 
-        # Apply SVD for each channel
-        if custom_svd:
-            U_R, s_R, VT_R = svd_2(R, 1000000, 1, True, "R")()
-            U_G, s_G, VT_G = svd_2(G, 1000000, 1, True, "G")()
-            U_B, s_B, VT_B = svd_2(B, 1000000, 1, True, "B")()
-        else:
-            U_R, s_R, VT_R = np.linalg.svd(R, full_matrices=False)
-            U_G, s_G, VT_G = np.linalg.svd(G, full_matrices=False)
-            U_B, s_B, VT_B = np.linalg.svd(B, full_matrices=False)
 
         # Reconstruct the image channels at the given rank
         R_compressed = (U_R[:, :rank['R']] * s_R[:rank['R']]) @ VT_R[:rank['R'], :]
@@ -57,11 +59,13 @@ def svd_image_compression(input_image_path, output_dir, custom_svd=True):
         compressed_size = (rank['R'] * (U_R.shape[1] + VT_R.shape[0] + 1) +
                            rank['G'] * (U_G.shape[1] + VT_G.shape[0] + 1) +
                            rank['B'] * (U_B.shape[1] + VT_B.shape[0] + 1))
+        compressed_size = min(compressed_size, image_size)
         compression_ratio = compressed_size / image_size
         compression_ratios.append(compression_ratio)
 
         # Calculate the error
-        error = np.linalg.norm(image_array - compressed_image)
+        # error = np.linalg.norm(image_array - compressed_image)
+        error = mse(image_array, compressed_image)
         errors.append(error)
 
         # Output the compressed image
